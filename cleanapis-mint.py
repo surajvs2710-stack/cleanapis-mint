@@ -11,24 +11,42 @@ def sh(cmd, timeout=600):
 
 print("=== kaggle cleanapis mint start ===", flush=True)
 warp_ok = False
-try:
-    print(sh(
-        "curl -fsSL https://pkg.cloudflareclient.com/pubkey.gpg | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg 2>/dev/null; "
-        "echo 'deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com $(lsb_release -cs) main' | sudo tee /etc/apt/sources.list.d/cloudflare-client.list >/dev/null; "
-        "sudo apt-get update -qq >/dev/null 2>&1; "
-        "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq cloudflare-warp >/dev/null 2>&1; echo warp-apt-done"))
-    print(sh(
-        "sudo warp-cli --accept-tos registration new 2>&1 | tail -1; "
-        "sudo warp-cli --accept-tos mode proxy 2>&1 | tail -1; "
-        "sudo warp-cli --accept-tos proxy port 40000 2>&1 | tail -1; "
-        "sudo warp-cli --accept-tos connect 2>&1 | tail -1; sleep 6; "
-        "curl -s --max-time 20 --socks5-hostname 127.0.0.1:40000 https://www.cloudflare.com/cdn-cgi/trace | grep -E '^ip=|^warp='"))
-    ipc = sh("curl -s --max-time 20 --socks5-hostname 127.0.0.1:40000 https://www.cloudflare.com/cdn-cgi/trace | grep '^ip=' || echo NOIP")
-    warp_ok = ("warp=on" in ipc) or bool(re.search(r"^ip=\S+", ipc.strip())) and "NOIP" not in ipc
-    print("warp_ok=%s (%s)" % (warp_ok, ipc.strip()), flush=True)
-except Exception as e:
-    print("warp setup failed: %s" % str(e)[:150], flush=True)
+TRY_WARP = os.environ.get("SKIP_WARP", "") != "1"
+if TRY_WARP:
+    try:
+        print(sh(
+            "sudo apt-get install -y -qq wget ca-certificates lsb-release gpg curl >/dev/null 2>&1; "
+            "wget -qO- https://pkg.cloudflareclient.com/pubkey.gpg | sudo tee /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg >/dev/null; "
+            "echo 'deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com $(lsb_release -cs) main' | sudo tee /etc/apt/sources.list.d/cloudflare-client.list >/dev/null; "
+            "sudo apt-get update -qq 2>&1 | tail -n 3; "
+            "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y cloudflare-warp 2>&1 | tail -n 6; "
+            "which warp-cli warp-svc || { echo WARP_INSTALL_FAILED; dpkg -l 2>/dev/null | grep -i warp; tail -n 8 /var/log/apt/history.log; }; "
+            "echo warp-apt-done"))
+        print(sh("which warp-cli warp-svc"), flush=True)
+        for attempt in range(6):
+            print(sh(
+                "setsid nohup sudo /usr/bin/warp-svc >/var/log/warp-svc.log 2>&1 & sleep 4; "
+                "sudo warp-cli --accept-tos registration new >/dev/null 2>&1; "
+                "sudo warp-cli --accept-tos mode proxy >/dev/null 2>&1; "
+                "sudo warp-cli --accept-tos proxy port 40000 >/dev/null 2>&1; "
+                "sudo warp-cli --accept-tos connect >/dev/null 2>&1; "
+                "echo warp-attempt-%d status=%s port40000=%s" % (attempt,
+                "connected" if "connected" in sh("sudo warp-cli --accept-tos status 2>&1") else sh("sudo warp-cli --accept-tos status 2>&1")[:60],
+                "yes" if "40000" in sh("sudo ss -ltn 2>/dev/null || netstat -ltn 2>/dev/null") else "no")), flush=True)
+            for i in range(9):
+                time.sleep(10)
+                ipc = sh("curl -s --max-time 8 --socks5-hostname 127.0.0.1:40000 https://www.cloudflare.com/cdn-cgi/trace")
+                if "warp=on" in ipc:
+                    warp_ok = True
+                    print("warp_ok=True (%s)" % ipc.strip().replace("\n", " ")[:120], flush=True)
+                    break
+            if warp_ok:
+                break
+            print("warp attempt %d failed (svc log tail: %s)" % (attempt, sh("tail -n 3 /var/log/warp-svc.log 2>/dev/null").strip()[:120]), flush=True)
+    except Exception as e:
+        print("warp setup failed: %s" % str(e)[:150], flush=True)
 PROXY = "socks5://127.0.0.1:40000" if warp_ok else ""
+print("warp_ok=%s proxy=%s" % (warp_ok, PROXY), flush=True)
 print(sh(
     "sudo apt-get remove -y -qq chromium chromium-browser chromium-driver >/dev/null 2>&1; "
     "sudo apt-get update -qq >/dev/null 2>&1; "
@@ -293,10 +311,21 @@ def mint_one(n):
                 pass
         d.get("https://cleanapis.com/register")
         time.sleep(12)
-        print("  waiting turnstile token (up to 4 min)...", flush=True)
+        # widget diagnostics (skill diag: iframe count, turnstile container, egress class)
+        try:
+            diag = d.execute_script(
+                "JSON.stringify({rs:document.readyState,ifr:document.querySelectorAll('iframe').length,"
+                "w:!!document.querySelector('.cf-turnstile'),hi:!!document.querySelector('input[name=cf-turnstile-response]')})")
+        except Exception:
+            diag = "diag-err"
+        vm_trace = sh("curl -s --max-time 8 https://cleanapis.com/cdn-cgi/trace | grep -E '^ip=|^warp=' | tr '\\n' ' '").strip()
+        tok_wait = 240 if warp_ok else 90
+        print("  diag ifr/turnstile=%s vm_egress=%s token_wait=%ds" % (diag, vm_trace[:80], tok_wait), flush=True)
+        print("  waiting turnstile token (up to %d min)..." % (tok_wait // 60), flush=True)
         tok_v = ""
         t0 = time.time()
-        while time.time() - t0 < 240:
+        last_diag = 0
+        while time.time() - t0 < tok_wait:
             try:
                 v = (d.find_element("css selector", "input[name=cf-turnstile-response]").get_attribute("value") or "")
                 if v and v != "EMPTY":
@@ -310,10 +339,19 @@ def mint_one(n):
                     el.send_keys(ch); time.sleep(0.12)
             except Exception:
                 pass
+            if int(time.time() - t0) - last_diag >= 120:
+                last_diag = int(time.time() - t0)
+                try:
+                    print("    +%ds ifr=%s turnstile=%s" % (last_diag,
+                        d.execute_script("document.querySelectorAll('iframe').length"),
+                        d.execute_script("!!document.querySelector('.cf-turnstile')")), flush=True)
+                except Exception:
+                    pass
             print("    +%ds cf=%s" % (int(time.time() - t0), str(tok_v)[:10]), flush=True)
             time.sleep(20)
         if not tok_v:
             res["stage"] = "no-token"
+            res["diag"] = {"first": diag, "warp_ok": warp_ok, "vm_egress": vm_trace}
             print("  NO-TOKEN this profile", flush=True)
             return res
         res["stage"] = "token"

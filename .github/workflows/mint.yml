@@ -5,6 +5,8 @@ on:
     branches: [main]
 jobs:
   mint:
+    env:
+      SKIP_WARP: "1"
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
