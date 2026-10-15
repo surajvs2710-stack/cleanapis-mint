@@ -101,7 +101,8 @@ class CDPShim:
             [chrome_bin, "--user-data-dir=/tmp/cap%d" % profile, "--window-size=1366,900",
              "--no-first-run", "--no-sandbox", "--disable-dev-shm-usage",
              "--disable-blink-features=AutomationControlled", "--lang=en-US",
-             "--remote-debugging-port=%d" % port],
+             "--remote-debugging-port=%d" % port] +
+            (["--proxy-server=%s" % PROXY] if PROXY else []),
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
             env={**os.environ, "DISPLAY": ":99"})
         time.sleep(5)
@@ -243,6 +244,9 @@ def _mk_driver(n):
     o.add_argument("--disable-dev-shm-usage")
     o.add_argument("--disable-blink-features=AutomationControlled")
     o.add_argument("--lang=en-US")
+    if PROXY:
+        o.add_argument("--proxy-server=" + PROXY)
+        print("  using proxy", PROXY, flush=True)
     o.add_experimental_option("excludeSwitches", ["enable-automation"])
     # strategy 1: Selenium Manager (auto-downloads matching driver)
     try:
