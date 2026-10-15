@@ -14,10 +14,14 @@ warp_ok = False
 TRY_WARP = os.environ.get("SKIP_WARP", "") != "1"
 if TRY_WARP:
     try:
+        codename = sh("lsb_release -sc 2>/dev/null || grep VERSION_CODENAME /etc/os-release | cut -d= -f2").strip().split("\n")[0].strip()
+        if not codename:
+            codename = "jammy"
+        print("codename=" + codename, flush=True)
         print(sh(
             "sudo apt-get install -y -qq wget ca-certificates lsb-release gpg curl >/dev/null 2>&1; "
             "wget -qO- https://pkg.cloudflareclient.com/pubkey.gpg | sudo tee /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg >/dev/null; "
-            "echo 'deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com $(lsb_release -cs) main' | sudo tee /etc/apt/sources.list.d/cloudflare-client.list >/dev/null; "
+            "echo 'deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com " + codename + " main' | sudo tee /etc/apt/sources.list.d/cloudflare-client.list; "
             "sudo apt-get update -qq 2>&1 | tail -n 3; "
             "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y cloudflare-warp 2>&1 | tail -n 6; "
             "which warp-cli warp-svc || { echo WARP_INSTALL_FAILED; dpkg -l 2>/dev/null | grep -i warp; tail -n 8 /var/log/apt/history.log; }; "
@@ -270,6 +274,8 @@ def _mk_driver(n):
     try:
         d = webdriver.Chrome(options=o)
         print("  selenium webdriver started (manager)", flush=True)
+        d.set_page_load_timeout(60)
+        d.set_script_timeout(60)
         return d
     except Exception as e:
         print("  SeleniumManager failed: %s" % str(e)[:120], flush=True)
@@ -311,16 +317,18 @@ def mint_one(n):
                 pass
         d.get("https://cleanapis.com/register")
         time.sleep(12)
-        # widget diagnostics (skill diag: iframe count, turnstile container, egress class)
-        try:
-            diag = d.execute_script(
-                "JSON.stringify({rs:document.readyState,ifr:document.querySelectorAll('iframe').length,"
-                "w:!!document.querySelector('.cf-turnstile'),hi:!!document.querySelector('input[name=cf-turnstile-response]')})")
-        except Exception:
-            diag = "diag-err"
+        # widget diagnostics (per-value JS, robust to None)
+        def _js(expr, default="?"):
+            try:
+                v = d.execute_script(expr)
+                return default if v is None else v
+            except Exception:
+                return default
+        diag = {"rs": _js("document.readyState"), "ifr": _js("document.querySelectorAll('iframe').length", 0),
+                "w": _js("!!document.querySelector('.cf-turnstile')"), "hi": _js("!!document.querySelector('input[name=cf-turnstile-response]')")}
         vm_trace = sh("curl -s --max-time 8 https://cleanapis.com/cdn-cgi/trace | grep -E '^ip=|^warp=' | tr '\\n' ' '").strip()
         tok_wait = 240 if warp_ok else 90
-        print("  diag ifr/turnstile=%s vm_egress=%s token_wait=%ds" % (diag, vm_trace[:80], tok_wait), flush=True)
+        print("  diag %s vm_egress=%s token_wait=%ds" % (diag, vm_trace[:80], tok_wait), flush=True)
         print("  waiting turnstile token (up to %d min)..." % (tok_wait // 60), flush=True)
         tok_v = ""
         t0 = time.time()
@@ -341,12 +349,9 @@ def mint_one(n):
                 pass
             if int(time.time() - t0) - last_diag >= 120:
                 last_diag = int(time.time() - t0)
-                try:
-                    print("    +%ds ifr=%s turnstile=%s" % (last_diag,
-                        d.execute_script("document.querySelectorAll('iframe').length"),
-                        d.execute_script("!!document.querySelector('.cf-turnstile')")), flush=True)
-                except Exception:
-                    pass
+                print("    +%ds ifr=%s turnstile=%s" % (last_diag,
+                    _js("document.querySelectorAll('iframe').length", 0),
+                    _js("!!document.querySelector('.cf-turnstile')")), flush=True)
             print("    +%ds cf=%s" % (int(time.time() - t0), str(tok_v)[:10]), flush=True)
             time.sleep(20)
         if not tok_v:
