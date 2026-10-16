@@ -1,6 +1,5 @@
 {
- "stage": "crash",
- "traceback": "Traceback (most recent call last):\n  File \"/home/ubuntu/workspace/cleanapi_mint/local_chrome_mint.py\", line 145, in <module>\n    a.clear(); a.send_keys(gname); time.sleep(0.4); b.clear(); b.send_keys(surname); time.sleep(0.4)\n                                                                           ^^^^^^^\nNameError: name 'surname' is not defined\n",
- "mail": "spctdnqn@maxxspace.com",
- "g_pw": null
+ "stage": "g-birthday-step-stuck",
+ "body": "Loading\nBasic information\nEnter your birthday and gender\nMonth\nDay\nYear\nPlease enter a month\nGender\nPlease select your gender\nWhy we ask for your birthday and gender\nNext\nEnglish (United States)\nHelp\nPrivacy\nTerms\nBasic information Enter your birthda",
+ "url": "https://accounts.google.com/lifecycle/steps/signup/birthdaygender?TL=ADG-GRRGu3zN6yKjTzTzkV5V3dHnSMuyjxnGNwX3ggQ_VHXqTf035GPASeAZzpt1&continue=https%3A%2F%2Faccounts.google.com%2FManageAccount%3Fnc%3D1&dsh=S-249032620%3A1792179835413690&flowEntry=SignUp&flowName=GlifWebSignIn"
 }
