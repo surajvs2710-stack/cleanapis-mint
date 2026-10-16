@@ -1,5 +1,5 @@
 {
- "stage": "g-email-page-missing",
- "body": "Loading\nBasic information\nEnter your birthday and gender\nMonth\nDay\nYear\nGender\nWhy we ask for your birthday and gender\nNext\nEnglish (United States)\nHelp\nPrivacy\nTerms\nBasic information Enter your birt",
- "url": "https://accounts.google.com/lifecycle/steps/signup/birthdaygender?TL=ADG-GRQChGiyIiItilT1noVLUaFhDqMMMQ2FWSibAvssUuoRVtKBYQbW1XTqlVSR&continue=https%3A%2F%2Faccounts.google.com%2FManageAccount%3Fnc%3D1&dsh=S590811573%3A1792177775737711&flowEntry=SignUp&flowName=GlifWebSignIn"
+ "stage": "g-birthday-step-stuck",
+ "body": "Loading\nBasic information\nEnter your birthday and gender\nMonth\nDay\nYear\nPlease enter a month\nGender\nPlease select your gender\nWhy we ask for your birthday and gender\nNext\nEnglish (United States)\nHelp\nPrivacy\nTerms\nBasic information Enter your birthda",
+ "url": "https://accounts.google.com/lifecycle/steps/signup/birthdaygender?TL=ADG-GRSY_7CDbM6zLuay5r3hqEqF8nDVij1Fxq0gCQ4y4RqkwyIsmZct2Rx0ykIy&continue=https%3A%2F%2Faccounts.google.com%2FManageAccount%3Fnc%3D1&dsh=S-1340429055%3A1792178907125171&flowEntry=SignUp&flowName=GlifWebSignIn"
 }
