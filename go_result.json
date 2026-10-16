@@ -1,5 +1,6 @@
 {
- "stage": "g-signup-not-form",
- "body": "Loading\nCreate a Google Account\nEnter your name\nFirst name\nLast name (optional)\nNext\nEnglish (United States)\nHelp\nPrivacy\nTerms",
- "url": "https://accounts.google.com/lifecycle/steps/signup/name?dsh=S1913009365:1792175903824000&flowEntry=SignUp&flowName=GlifWebSignIn&TL=ADG-GRTfX_pCLKShsHulBy8fmrxr5yFEDzSwgxArSvZoY-lZPjNdNjrWnx3G-Hcm&continue=https://accounts.google.com/ManageAccount?nc%3D1"
+ "stage": "crash",
+ "traceback": "Traceback (most recent call last):\n  File \"/kaggle/src/script.py\", line 313, in <module>\n    gh_addr, gh_pw, mtok = mailtm()\n                           ^^^^^^\nNameError: name 'mailtm' is not defined\n",
+ "mail": null,
+ "g_pw": null
 }
