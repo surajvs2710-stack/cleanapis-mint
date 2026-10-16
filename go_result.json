@@ -1,0 +1,6 @@
+{
+ "stage": "crash",
+ "traceback": "Traceback (most recent call last):\n  File \"/kaggle/src/script.py\", line 313, in <module>\n    gh_addr, gh_pw, mtok = mailtm()\n                           ^^^^^^\nNameError: name 'mailtm' is not defined\n",
+ "mail": null,
+ "g_pw": null
+}
