@@ -2,5 +2,5 @@
  "stage": "g-birthday-stuck7",
  "body": "Loading\nBasic information\nEnter your birthday and gender\nMonth\nDay\nYear\nPlease enter a month\nGender\nPlease select your gender\nWhy we ask for your birthday and gender\nNext\nEnglish (United States)\nHelp\nPrivacy\nTerms\nBasic information Enter your birthda",
  "dbg": "clkE:Month:Message: element click intercepted: Elem; no-Month; clkE:Gender:Message: element click intercepted: Elem; no-Gender; m=False g=False; dy:ok",
- "url": "https://accounts.google.com/lifecycle/steps/signup/birthdaygender?TL=ADG-GRTt6-IVw8c4WdIm8sDUF49OsrcPv_p3vVxdtoSeAhiAjKW0hjuGIMe3zJRF&continue=https%3A%2F%2Faccounts.google.com%2FManageAccount%3Fnc%3D1&dsh=S386531991%3A1792179457717499&flowEntry=SignUp&flowName=GlifWebSignIn"
+ "url": "https://accounts.google.com/lifecycle/steps/signup/birthdaygender?TL=ADG-GRRlBO1ydX6RsKpZXSLSYUAWcOkl690XfHuYAOiD_C3jIJ2qbWzvUYPi4oWA&continue=https%3A%2F%2Faccounts.google.com%2FManageAccount%3Fnc%3D1&dsh=S454931200%3A1792179474282444&flowEntry=SignUp&flowName=GlifWebSignIn"
 }
