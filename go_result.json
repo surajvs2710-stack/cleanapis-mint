@@ -1,57 +1,6 @@
 {
- "stage": "dom-dump",
- "dump": [
-  {
-   "a": "First name",
-   "i": "firstName",
-   "n": "firstName",
-   "t": "INPUT",
-   "tx": "",
-   "ty": "text",
-   "v": true
-  },
-  {
-   "a": "Last name (optional)",
-   "i": "lastName",
-   "n": "lastName",
-   "t": "INPUT",
-   "tx": "",
-   "ty": "text",
-   "v": true
-  },
-  {
-   "a": "",
-   "i": "",
-   "n": "",
-   "t": "BUTTON",
-   "tx": "Next",
-   "ty": "button",
-   "v": true
-  },
-  {
-   "a": "Scroll down",
-   "i": "",
-   "n": "",
-   "t": "BUTTON",
-   "tx": "",
-   "ty": "button",
-   "v": true
-  },
-  {
-   "a": "",
-   "i": "g-recaptcha-response-100000",
-   "n": "g-recaptcha-response",
-   "t": "TEXTAREA",
-   "tx": "",
-   "ty": "textarea",
-   "v": false
-  }
- ],
- "frames": [
-  "https://accounts.google.com/_/bscframe",
-  "https://accounts.google.com/_/bscframe",
-  "https://www.google.com/recaptcha/enterprise/anchor?ar=1&k=6Lf-_ekqAAAAAO4AXrJISaHw4_bW76NcfwhLN7Is&co=aHR0cHM6Ly9hY2NvdW50cy5nb29nbGUuY29tOjQ0Mw..&hl=en&v=4EDjxXf4knsx6UBM1L2V6cv8&size=invisible&badge=none&anchor-ms=20000&execute-ms=30000&cb=w57c388i42nt",
-  ""
- ],
- "url": "https://accounts.google.com/lifecycle/steps/signup/name?dsh=S1461521031:1792177242773470&flowEntry=SignUp&flowName=GlifWebSignIn&TL=ADG-GRREO25RVrjvbrZHRAis5gKd6NjXah5xexmg0CXxsZSl6YW_9ac-hQ__M8oP&continue=https://accounts.google.com/ManageAccount?nc%3D1"
+ "stage": "crash",
+ "traceback": "Traceback (most recent call last):\n  File \"/kaggle/src/script.py\", line 372, in <module>\n    if not gclick(\"next\"): result(\"g-signup-no-next\", url=d.current_url)\n           ~~~~~~^^^^^^^^\n  File \"/kaggle/src/script.py\", line 356, in gclick\n    return bool(d.execute_script(\n                ~~~~~~~~~~~~~~~~^\n        \"var els=[...document.querySelectorAll('button,[role=button],a,input[type=submit]')];\"\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        \"for(var i=0;i<els.length;i++){var t=((els[i].innerText||els[i].value||'')+'').trim().toLowerCase();\"\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        \"if(t && t.indexOf(TXT)>=0 && els[i].offsetParent!==null){els[i].click();return true;}}\"\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        \"return false;\", _j.dumps(txt)))\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/dist-packages/selenium/webdriver/remote/webdriver.py\", line 617, in execute_script\n    return self.execute(command, {\"script\": script, \"args\": converted_args})[\"value\"]\n           ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/dist-packages/selenium/webdriver/remote/webdriver.py\", line 506, in execute\n    self.error_handler.check_response(response)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^\n  File \"/usr/local/lib/python3.13/dist-packages/selenium/webdriver/remote/errorhandler.py\", line 232, in check_response\n    raise exception_class(message, screen, stacktrace)\nselenium.common.exceptions.JavascriptException: Message: javascript error: TXT is not defined\n  (Session info: chrome=155.0.8059.84)\nStacktrace:\n#0 0x5cccf716b5ea <unknown>\n#1 0x5cccf6a85869 <unknown>\n#2 0x5cccf6a8ca00 <unknown>\n#3 0x5cccf6a8f61c <unknown>\n#4 0x5cccf6b2be18 <unknown>\n#5 0x5cccf6b2ad4e <unknown>\n#6 0x5cccf6acf29b <unknown>\n#7 0x5cccf6ad00a1 <unknown>\n#8 0x5cccf712dfec <unknown>\n#9 0x5cccf712c7f5 <unknown>\n#10 0x5cccf7117785 <unknown>\n#11 0x5cccf712d45a <unknown>\n#12 0x5cccf70ffd99 <unknown>\n#13 0x5cccf7155b18 <unknown>\n#14 0x5cccf7155cb5 <unknown>\n#15 0x5cccf7169f73 <unknown>\n#16 0x7d7d290c0b84 <unknown>\n#17 0x7d7d2914dcc4 __clone\n\n",
+ "mail": "kxjbgbca@maxxspace.com",
+ "g_pw": null
 }
