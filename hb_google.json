@@ -1,5 +1,5 @@
 {
- "stage": "signup-step1-fail",
- "err": "Message: no such element: Unable to locate element: {\"method\":\"css selector\",\"selector\":\"button[data-test-id=continue]\"}\n  (Session info: chrome=155.0.8059.84); For documentation on this error, please",
- "url": "https://accounts.google.com/lifecycle/steps/signup/name?dsh=S-1039443998:1792327308074949&flowEntry=SignUp&flowName=GlifWebSignIn&TL=ADG-GRRdyhQlm-Gmk"
+ "stage": "g-password-page-missing",
+ "body": "Loading\nBasic information\nEnter your birthday and gender\nMonth\nDay\nYear\nPlease enter a month\nGender\nPlease select your gender\nWhy we ask for your birthday and gender\nNext\nEnglish (United States)\nHelp\nPrivacy\nTerms\nBasic information Enter your birthda",
+ "url": "https://accounts.google.com/lifecycle/steps/signup/birthdaygender?TL=ADG-GRSGjHIi7__pY1FA_DckyT_hDbQCalKRi8bzrB1JJ36ImFBKyao5sTCbyo7s&continue=https%3"
 }
