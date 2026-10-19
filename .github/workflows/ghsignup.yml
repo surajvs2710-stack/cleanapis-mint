@@ -1,6 +1,8 @@
 name: ghsignup
 on:
   workflow_dispatch:
+  push:
+    branches: [ghmint]
 jobs:
   signup:
     runs-on: ubuntu-latest
